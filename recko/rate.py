@@ -15,7 +15,7 @@ tmdb.API_KEY = '9fdda39f0f05f06b359d029706a8a1e0'
 
 
 @bp.route('/')
-def index():
+def home():
     movie = tmdb.Movies(536554)
     response = movie.info()
     return render_template('home.html', title=movie.title)

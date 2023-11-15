@@ -35,7 +35,7 @@ def register():
                 created = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
                 db.execute(
-                    "INSERT INTO users (name, username, password, created) VALUES (?, ?)",
+                    "INSERT INTO users (name, username, password, created) VALUES (?, ?, ?, ?)",
                     (name, username, generate_password_hash(password), created)
                 )
                 db.commit()

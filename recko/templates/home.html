@@ -1,11 +1,69 @@
 {% extends 'base.html' %}
-
-{% block header %}
-    <h1>{% block title %}Login{% endblock %}</h1>
-{% endblock %}
+{% block title %}My Ratings{% endblock %}
 
 {% block content %}
-<p>
-    Movie: {{ title }}
-</p>
+
+  <form action="{{ url_for('rate.home') }}" method="get" class="d-flex my-4" role="search">
+    <input class="form-control me-2" type="search" placeholder="Find movies" aria-label="Search">
+    <button class="btn btn-outline-info" type="submit">Search</button>
+  </form>
+
+  <h2>My Reckos</h2>
+
+  {% if my_reckos %}
+  {% else %}
+    <p class="text-body">
+      No reckos yet - try rating a few movies.
+    </p>
+  {% endif %}
+
+  <h2>My Movies</h2>
+
+  {% if my_movies %}
+    <div class="row">
+     {% for movie in my_movies %}
+     <div class="col-6 col-md-3 col-lg-2 mb-4">
+        <div class="card text-center h-100">
+          <img src="https://image.tmdb.org/t/p/original{{ movie['poster_path'] }}"
+               class="card-img-top"
+               alt="{{ movie['title'] }}"
+               loading="lazy">
+          <div class="card-body">
+            <p class="card-text">{{ movie['title'] }}</p>
+          </div>
+          <div class="card-footer">
+              <form action="{{ url_for('rate.rate_movie') }}" method="post" role="form" class="row gx-1 align-items-center">
+              <div class="col-8">
+                <input type="hidden" name="id" id="rating_id-{{ movie['id'] }}" value="{{ movie['rating_id'] }}">
+                <input type="hidden" name="movie_id" id="movie_id-{{ movie['id'] }}" value="{{ movie['id'] }}">
+                <label for="rating-{{ movie['id'] }}" class="visually-hidden">Rate {{ movie['title'] }}</label>
+                <select class="form-control form-control-sm" name="rating" id="rating-{{ movie['id'] }}">
+                  <option>--</option>
+                  {% for option in valid_ratings %}
+                    <option value="{{ option }}" {{ ' selected' if option == movie['rating'] }}>
+                      {{ option }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-4">
+                <button class="btn btn-info btn-sm" type="submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/>
+                  </svg>
+                </button>
+              </div>
+              </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-body">
+      You haven't rated any movies yet.
+    </p>
+  {% endif %}
+
 {% endblock %}

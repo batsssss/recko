@@ -1,19 +1,16 @@
 import functools
-
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, Flask
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from recko.db import get_db
 
-from datetime import datetime
+app = Flask(__name__)
+bp = Blueprint('auth', __name__, )
 
-bp = Blueprint('auth', __name__)
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
-
     if request.method == 'POST':
 
         name = request.form['name']
@@ -32,11 +29,9 @@ def register():
 
         if error is None:
             try:
-                created = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-
                 db.execute(
-                    "INSERT INTO users (name, username, password, created) VALUES (?, ?, ?, ?)",
-                    (name, username, generate_password_hash(password), created)
+                    "INSERT INTO users (name, username, password, rating_mean, rating_n) VALUES (?, ?, ?, ?, ?)",
+                    (name, username, generate_password_hash(password), 0, 0)
                 )
                 db.commit()
             except db.IntegrityError:
@@ -51,6 +46,7 @@ def register():
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -88,11 +84,10 @@ def load_logged_in_user():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('rate.home'))
+    return redirect(url_for('auth.login'))
 
 
 def login_required(view):
-
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

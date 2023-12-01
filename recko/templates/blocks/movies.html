@@ -14,7 +14,7 @@
               <h6 class="card-title">{{ movie['title'] }}</h6>
               <p class="card-text text-muted">{{ movie['year'] }}</p>
               {% if movie['rating_pr'] %}
-                <span class="badge text-bg-{{ 'success' if movie['rating_pr'] >= 4 else 'warning' }}">
+                <span class="badge text-bg-{{ 'success' if movie['rating_pr']|round(1) >= 4 else 'warning' }}">
                   {{ movie['rating_pr'] |round(1) }}
                 </span>
               {% endif %}

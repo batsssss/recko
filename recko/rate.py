@@ -22,7 +22,7 @@ def home():
     my_reckos = []
     my_finds = []
 
-    display_limit = 24
+    display_limit = 96
     rated_ids = []
     search = False
 
